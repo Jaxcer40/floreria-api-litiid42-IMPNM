@@ -10,10 +10,7 @@ class User {
     // encriptar contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
     
-    const sql = `
-      INSERT INTO usuarios (nombre, correo_electronico, contrasenia, rol) 
-      VALUES (?, ?, ?, ?)
-    `;
+    const sql = 'INSERT INTO usuarios (nombre, correo_electronico, `contraseña`, rol) VALUES (?, ?, ?, ?)';
     
     const result = await query(sql, [nombre, email, hashedPassword, rol]);
     return result.insertId;
@@ -21,8 +18,8 @@ class User {
 
   // buscar por email
   static async findByEmail(email) {
-    const sql = `SELECT * FROM usuarios WHERE correo_electronico = ? LIMIT 1`;
-    console.log(sql)
+    // aliasar la columna con ñ a un nombre seguro en JS (`contrasenia`)
+    const sql = 'SELECT id, nombre, correo_electronico, `contraseña` AS contrasenia, rol, estatus FROM usuarios WHERE correo_electronico = ? LIMIT 1';
     const users = await query(sql, [email]);
     return users[0] || null;
   }
@@ -55,7 +52,7 @@ class User {
     }
     if (userData.password) {
       const hashedPassword = await bcrypt.hash(userData.password, 10);
-      fields.push('contrasenia = ?');
+      fields.push('`contraseña` = ?');
       values.push(hashedPassword);
     }
 
