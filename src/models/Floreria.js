@@ -9,22 +9,15 @@ class Floreria {
       descripcion,
       logo,
       ubicacion,
-      telefono,
-      email,
-      horario,
-      estatus = 'activo',
+      estatus = 1,
       id_ciudad,
       id_usuario
     } = floreriaData;
 
-    const sql = `
-      INSERT INTO florerias 
-      (nombre, descripcion, logo, ubicacion, estatus, id_ciudad, id_usuario) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+    const sql = 'INSERT INTO florerias (nombre, descripcion, logo, ubicacion, estatus, id_ciudad, id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
     const result = await query(sql, [
-      nombre, descripcion, logo, ubicacion, telefono, correo, horario, estatus, id_ciudad, id_usuario
+      nombre, descripcion, logo, ubicacion, estatus, id_ciudad, id_usuario
     ]);
 
     return this.findById(result.insertId);
@@ -51,19 +44,23 @@ class Floreria {
 
   // listar todas las florerías con paginación
   static async findAll(page = 1, limit = 10, filters = {}) {
+    // asegurar que page y limit son números enteros
+    page = Math.max(1, parseInt(page) || 1);
+    limit = Math.max(1, parseInt(limit) || 10);
     const offset = (page - 1) * limit;
+    
     const conditions = [];
     const params = [];
 
     // filtros opcionales
     if (filters.estatus) {
       conditions.push('f.estatus = ?');
-      params.push(filters.estatus);
+      params.push(parseInt(filters.estatus) || filters.estatus);
     }
 
     if (filters.id_ciudad) {
       conditions.push('f.id_ciudad = ?');
-      params.push(filters.id_ciudad);
+      params.push(parseInt(filters.id_ciudad) || filters.id_ciudad);
     }
 
     if (filters.search) {
@@ -78,7 +75,7 @@ class Floreria {
     const [countResult] = await query(countSql, params);
     const total = countResult.total;
 
-    // Obtener registros
+    // Obtener registros - LIMIT y OFFSET se interpolan directamente como números (no parámetros)
     const sql = `
       SELECT 
         f.*,
@@ -89,11 +86,11 @@ class Floreria {
       INNER JOIN ciudades c ON f.id_ciudad = c.id
       INNER JOIN usuarios u ON f.id_usuario = u.id
       ${whereClause}
-      ORDER BY f.created_at DESC
-      LIMIT ? OFFSET ?
+      LIMIT ${limit} OFFSET ${offset}
     `;
+  console.log(sql);
 
-    const florerias = await query(sql, [...params, limit, offset]);
+    const florerias = await query(sql, params);
 
     return { florerias, total };
   }
@@ -120,8 +117,7 @@ class Floreria {
     const values = [];
 
     const allowedFields = [
-      'nombre', 'descripcion', 'logo', 'ubicacion', 
-      'telefono', 'email', 'horario', 'estatus', 'id_ciudad'
+      'nombre', 'descripcion', 'logo', 'ubicacion', 'estatus', 'id_ciudad'
     ];
 
     allowedFields.forEach(field => {
