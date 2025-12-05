@@ -18,7 +18,7 @@ const upload = require('../config/multer');
  *         description: Estadísticas obtenidas
  */
 //router.get('/stats', authenticateToken, floreriaController.getStats);
-
+//router.get('/stats', authenticateToken, floreriaController.getStats);
 /**
  * @swagger
  * /api/florerias:
@@ -43,9 +43,9 @@ const upload = require('../config/multer');
  *       - in: query
  *         name: estatus
  *         schema:
- *           type: string
- *           enum: [activo, inactivo]
- *         description: Filtrar por estatus
+ *           type: integer
+ *           enum: [0,1,2]
+ *         description: Filtrar por estatus (0=inactivo, 1=activo, 2=otro)
  *       - in: query
  *         name: id_ciudad
  *         schema:
@@ -113,7 +113,7 @@ router.get('/:id', authenticateToken, floreriaController.getById);
  *                 type: string
  *                 format: binary
  *                 description: Imagen del logo (JPG, PNG, WEBP - Máx 5MB)
- *               ubicacion:
+ *               direccion:
  *                 type: string
  *                 example: Av. Reforma 123
  *               telefono:
@@ -126,9 +126,9 @@ router.get('/:id', authenticateToken, floreriaController.getById);
  *                 type: string
  *                 example: Lun-Sab 9:00-19:00
  *               estatus:
- *                 type: string
- *                 enum: [activo, inactivo]
- *                 default: activo
+ *                 type: integer
+ *                 enum: [0,1,2]
+ *                 default: 1
  *               id_ciudad:
  *                 type: integer
  *                 example: 1
@@ -174,7 +174,7 @@ router.post(
  *               logo:
  *                 type: string
  *                 format: binary
- *               ubicacion:
+ *               direccion:
  *                 type: string
  *               telefono:
  *                 type: string
@@ -183,8 +183,8 @@ router.post(
  *               horario:
  *                 type: string
  *               estatus:
- *                 type: string
- *                 enum: [activo, inactivo]
+ *                 type: integer
+ *                 enum: [0,1,2]
  *               id_ciudad:
  *                 type: integer
  *     responses:

@@ -8,16 +8,16 @@ class Floreria {
       nombre,
       descripcion,
       logo,
-      ubicacion,
+      direccion,
       estatus = 1,
       id_ciudad,
       id_usuario
     } = floreriaData;
 
-    const sql = 'INSERT INTO florerias (nombre, descripcion, logo, ubicacion, estatus, id_ciudad, id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO florerias (nombre, descripcion, logo, direccion, estatus, id_ciudad, id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
     const result = await query(sql, [
-      nombre, descripcion, logo, ubicacion, estatus, id_ciudad, id_usuario
+      nombre, descripcion, logo, direccion, estatus, id_ciudad, id_usuario
     ]);
 
     return this.findById(result.insertId);
@@ -117,7 +117,7 @@ class Floreria {
     const values = [];
 
     const allowedFields = [
-      'nombre', 'descripcion', 'logo', 'ubicacion', 'estatus', 'id_ciudad'
+      'nombre', 'descripcion', 'logo', 'direccion', 'estatus', 'id_ciudad'
     ];
 
     allowedFields.forEach(field => {
