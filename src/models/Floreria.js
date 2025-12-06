@@ -169,7 +169,7 @@ class Floreria {
       SELECT 
         COUNT(*) as total,
         SUM(CASE WHEN estatus = 1 THEN 1 ELSE 0 END) as activas,
-        SUM(CASE WHEN estatus = 2 THEN 1 ELSE 0 END) as inactivas
+        SUM(CASE WHEN estatus = 0 THEN 1 ELSE 0 END) as inactivas
       FROM florerias
     `;
     const [result] = await query(sql);

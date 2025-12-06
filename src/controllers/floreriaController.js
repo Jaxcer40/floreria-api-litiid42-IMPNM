@@ -170,8 +170,35 @@ const floreriaController = {
       next(error);
     }
   },
- 
- 
-};
 
-module.exports = floreriaController;
+    getByCiudad: async (req, res, next) => {
+      try {
+        const { idCiudad } = req.params;
+        const florerias = await Floreria.findByCiudad(idCiudad);
+
+        if (!florerias || florerias.length === 0) {
+          return res.status(404).json(errorResponse('No se encontraron florerías en esta ciudad', 404));
+        }
+
+        const floreriasWithUrls = florerias.map(floreria => ({
+          ...floreria,
+          logo_url: floreria.logo ? getFileUrl(req, floreria.logo) : null
+        }));
+
+        res.json(successResponse(floreriasWithUrls, 'Florerías encontradas'));
+      } catch (error) {
+        next(error);
+      }
+    },
+
+    getStats: async (req, res, next) => {
+      try {
+        const stats = await Floreria.getStats();
+        res.json(successResponse(stats, 'Estadísticas obtenidas'));
+      } catch (error) {
+        next(error);
+      }
+    },
+  };
+
+  module.exports = floreriaController;
