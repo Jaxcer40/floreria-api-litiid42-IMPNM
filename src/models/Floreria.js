@@ -4,7 +4,7 @@ const { query } = require('../config/database');
 class Floreria {
   // crear florería
   static async create(floreriaData) {
-    const {
+    let {
       nombre,
       descripcion,
       logo,
@@ -13,6 +13,11 @@ class Floreria {
       id_ciudad,
       id_usuario
     } = floreriaData;
+
+    // convertir estatus string a número si es necesario
+    if (typeof estatus === 'string') {
+      estatus = estatus.toLowerCase() === 'activo' ? 1 : 0;
+    }
 
     const sql = 'INSERT INTO florerias (nombre, descripcion, logo, direccion, estatus, id_ciudad, id_usuario) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
@@ -122,8 +127,13 @@ class Floreria {
 
     allowedFields.forEach(field => {
       if (floreriaData[field] !== undefined) {
+        let value = floreriaData[field];
+        // convertir estatus string a número si es necesario
+        if (field === 'estatus' && typeof value === 'string') {
+          value = value.toLowerCase() === 'activo' ? 1 : 0;
+        }
         fields.push(`${field} = ?`);
-        values.push(floreriaData[field]);
+        values.push(value);
       }
     });
 

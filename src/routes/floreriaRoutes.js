@@ -18,7 +18,7 @@ const upload = require('../config/multer');
  *         description: Estadísticas obtenidas
  */
 //router.get('/stats', authenticateToken, floreriaController.getStats);
-//router.get('/stats', authenticateToken, floreriaController.getStats);
+
 /**
  * @swagger
  * /api/florerias:
@@ -43,9 +43,9 @@ const upload = require('../config/multer');
  *       - in: query
  *         name: estatus
  *         schema:
- *           type: integer
- *           enum: [0,1,2]
- *         description: Filtrar por estatus (0=inactivo, 1=activo, 2=otro)
+ *           type: string
+ *           enum: [activo, inactivo]
+ *         description: Filtrar por estatus
  *       - in: query
  *         name: id_ciudad
  *         schema:
@@ -126,9 +126,9 @@ router.get('/:id', authenticateToken, floreriaController.getById);
  *                 type: string
  *                 example: Lun-Sab 9:00-19:00
  *               estatus:
- *                 type: integer
- *                 enum: [0,1,2]
- *                 default: 1
+ *                 type: string
+ *                 enum: [activo, inactivo]
+ *                 default: activo
  *               id_ciudad:
  *                 type: integer
  *                 example: 1
@@ -183,8 +183,8 @@ router.post(
  *               horario:
  *                 type: string
  *               estatus:
- *                 type: integer
- *                 enum: [0,1,2]
+ *                 type: string
+ *                 enum: [activo, inactivo]
  *               id_ciudad:
  *                 type: integer
  *     responses:

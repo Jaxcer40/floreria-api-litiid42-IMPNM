@@ -36,12 +36,25 @@ const floreriaSchema = Joi.object({
  /* telefono: Joi.string().max(20).allow('', null),
   email: Joi.string().email().allow('', null),
   horario: Joi.string().max(100).allow('', null),*/
-  estatus: Joi.number().integer().valid(0,1,2).default(1),
+  estatus: Joi.alternatives().try(
+    Joi.string().valid('activo', 'inactivo').messages({
+      'any.only': 'El estatus debe ser "activo" o "inactivo"'
+    }),
+    Joi.number().integer().valid(0, 1, 2)
+  ).default('activo'),
   id_ciudad: Joi.number().integer().required().messages({
     'number.base': 'El ID de ciudad debe ser un número',
     'any.required': 'El ID de ciudad es obligatorio'
   })
 });
+
+// función auxiliar para convertir estatus string a número
+const convertEstatusToNumber = (estatus) => {
+  if (typeof estatus === 'string') {
+    return estatus.toLowerCase() === 'activo' ? 1 : 0;
+  }
+  return estatus;
+};
 
 // middleware de validación genérico
 const validate = (schema) => {
@@ -56,6 +69,11 @@ const validate = (schema) => {
       return res.status(400).json(
         errorResponse('Errores de validación', 400, errors)
       );
+    }
+
+    // convertir estatus string a número si aplica
+    if (value.estatus !== undefined) {
+      value.estatus = convertEstatusToNumber(value.estatus);
     }
 
     // reemplazar req.body con los valores validados
